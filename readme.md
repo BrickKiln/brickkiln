@@ -63,12 +63,12 @@ Symbols are shifted to the second row for easier access. Braces and operators ar
 ## Navigation Layer
 
 ```
-                                                    Alt + Left/Right arrow     LED Toggle   
-                                                        v             v            v
+                                                  Alt + Left/Right arrow     LED Toggle   
+                                                      v             v            v
  ,-----------------------------------------------------------------------------------.
- |      |      |      |      |      | Prev | Next | LWord|  Up  | RWord| PgUp |Brite |
+ |      |      | LWord|  Up  | RWord| Prev | Next | LWord|  Up  | RWord| PgUp |Brite |
  |------+------+------+------+------+-------------+------+------+------+------+------|
- |      |      |      |      |      | Vol- | Vol+ | Left | Down | Right| PgDn |      |
+ |      |      | Left | Down | Right| Vol- | Vol+ | Left | Down | Right| PgDn |      |
  |------+------+------+------+------+------|------+------+------+------+------+------|
  |      |      |      |      |      | Mute | Play | Bksp |  Tab | Enter|      |      |
  |------+------+------+------+------+------+------+------+------+------+------+------|

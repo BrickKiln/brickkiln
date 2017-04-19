@@ -2,10 +2,9 @@
 
 #include "planck.h"
 #include "action_layer.h"
-#ifdef AUDIO_ENABLE
-  #include "audio.h"
-#endif
-#include "eeconfig.h"
+#include "config.h"
+#include "version.h"
+
 
 extern keymap_config_t keymap_config;
 
@@ -18,8 +17,8 @@ extern keymap_config_t keymap_config;
 
 enum planck_keycodes {
   QWERTY = SAFE_RANGE,
-  LOWER,
-  RAISE,
+  LOWER = LT(_LOWER, KC_BSPC),
+  RAISE = LT(_RAISE, KC_ENT),
   NAV,
   BACKLIT
 };
@@ -45,16 +44,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   {KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC},
   {KC_ESC,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT},
   {KC_LSPO, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSPC},
-  {MO(_NAV), KC_LCTL, KC_LALT, KC_LGUI, LT(LOWER, KC_BSPC), KC_SPC,  KC_SPC,  LT(RAISE, KC_ENT), LGUI(KC_SPC), LCTL(KC_LEFT), LCTL(KC_RGHT),   MO(_NAV)}
+  {MO(_NAV), KC_LCTL, KC_LALT, KC_LGUI, LOWER, KC_SPC,  KC_SPC, RAISE, LGUI(KC_SPC), LCTL(KC_LEFT), LCTL(KC_RGHT),   MO(_NAV)}
 },
 
  /* Lower
   * ,-----------------------------------------------------------------------------------.
   * |   ~  |      |      |      |   [  |   +  |   -  |   ]  |      |      |      | Bksp |
   * |------+------+------+------+------+-------------+------+------+------+------+------|
-  * | Del  |   !  |   @  |   #  |   $  |   %  |   ^  |   =  |   &  |   _  |      |  |   |
+  * | Del  |   !  |   @  |   #  |   $  |   %  |   ^  |   =  |   &  |   _  |   \  |  |   |
   * |------+------+------+------+------+------|------+------+------+------+------+------|
-  * |      |      |      |      |   {  |   *  |   /  |   }  |      |      |   \  |      |
+  * |      |      |      |      |   {  |   *  |   /  |   }  |      |      |      |      |
   * |------+------+------+------+------+------+------+------+------+------+------+------|
   * |      |      |      |      |      |             |      |      |      |      |      |
   * `-----------------------------------------------------------------------------------'
@@ -87,25 +86,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Navigation Layer
  * ,-----------------------------------------------------------------------------------.
- * |      |      |      |      |      | Prev | Next | LWord|  Up  | RWord| PgUp |Brite |
+ * |      |      | LWord|  Up  | RWord| Prev | Next | LWord|  Up  | RWord| PgUp |      |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |      |      |      |      |      | Vol- | Vol+ | Left | Down | Right| PgDn |      |
+ * |      |      | Left | Down | Right| Vol- | Vol+ | Left | Down | Right| PgDn |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |      |      |      |      |      | Mute | Play | Bksp |  Tab | Enter|      |      |
+ * |      |      |      |      | Enter| Mute | Play | Bksp |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      |             |      |      |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
 [_NAV] = {
- {_______, _______, _______, _______, _______, KC_MPRV, KC_MNXT, LALT(KC_LEFT),   KC_UP, LALT(KC_RGHT), KC_PGUP, BACKLIT},
- {_______, _______, _______, _______, _______, KC_VOLD, KC_VOLU, KC_LEFT, KC_DOWN, KC_RGHT, KC_PGDN, _______},
- {_______, _______, _______, _______, _______, KC_MUTE, KC_MPLY, KC_BSPC,  KC_TAB,  KC_ENT, _______, _______},
+ {_______, KC_PGUP, LALT(KC_LEFT), KC_UP, LALT(KC_RGHT), KC_MPRV, KC_MNXT, LALT(KC_LEFT), KC_UP, LALT(KC_RGHT), KC_PGUP, _______},
+ {_______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, KC_VOLD, KC_VOLU, KC_LEFT, KC_DOWN, KC_RGHT, KC_PGDN, _______},
+ {_______, _______, _______, _______, KC_ENT, KC_MUTE, KC_MPLY, KC_BSPC, _______, _______, _______, _______},
  {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______}
 },
 
 /* Adjust (Lower + Raise)
  * ,-----------------------------------------------------------------------------------.
- * |      | Reset|      |      |      |      |      |      |      |      |      |  Del |
+ * |      | Reset|      |      |      |      |      |      |      |      |      |Brite |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * |      |      |      |Aud on|Audoff|AGnorm|AGswap|Qwerty|      |      |      |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
@@ -115,7 +114,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = {
-  {_______, RESET,   _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_DEL},
+  {_______, RESET,   _______, _______, _______, _______, _______, _______, _______, _______, _______, BACKLIT},
   {_______, _______, _______, AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, QWERTY,  _______, _______, _______, _______},
   {_______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  _______, _______, _______, _______, _______},
   {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______}
@@ -141,22 +140,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case LOWER:
       if (record->event.pressed) {
         layer_on(_LOWER);
+          breathing_speed_set(2);
+          breathing_pulse();
         update_tri_layer(_LOWER, _RAISE, _ADJUST);
       } else {
         layer_off(_LOWER);
         update_tri_layer(_LOWER, _RAISE, _ADJUST);
       }
-      return false;
+      //return false;
       break;
     case RAISE:
       if (record->event.pressed) {
         layer_on(_RAISE);
+        breathing_speed_set(2);
+        breathing_pulse();
         update_tri_layer(_LOWER, _RAISE, _ADJUST);
       } else {
         layer_off(_RAISE);
         update_tri_layer(_LOWER, _RAISE, _ADJUST);
       }
-      return false;
+      //return false;
       break;
     case BACKLIT:
       if (record->event.pressed) {
